@@ -1,0 +1,34 @@
+application: sandbox-donate
+version: 1
+runtime: php
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /images
+  static_dir: images
+  
+- url: /css
+  static_dir: css
+ 
+- url: /js
+  static_dir: js
+  
+- url: /fonts
+  static_dir: fonts
+  
+- url: /home.php
+  script: home.php
+  
+- url: /requests.php
+  script: requests.php
+  
+- url: /offers.php
+  script: offers.php
+
+- url: .*
+  script: login.php
