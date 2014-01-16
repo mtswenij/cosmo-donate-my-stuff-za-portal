@@ -1,6 +1,11 @@
+<?php 
+
+session_start(); 
+if(isset($_SESSION['userid']))
+{
+?>
 <!DOCTYPE HTML>
 <html>
-
 <head>
   <title>Donate My Stuff Portal</title>
   <meta name="description" content="website description" />
@@ -114,3 +119,11 @@
   </script>
 </body>
 </html>
+<?php
+}
+else
+{
+//user session not set.
+header("Location: login.php");
+}
+?>

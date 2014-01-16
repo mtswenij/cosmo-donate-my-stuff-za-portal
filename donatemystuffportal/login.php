@@ -1,16 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>Donate My Stuff Portal</title>
+  <title>Donate My Stuff Portal::.Login.::</title>
   <meta name="description" content="website description" />
   <meta name="keywords" content="website keywords, website keywords" />
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <!-- modernizr enables HTML5 elements and feature detects -->
   <script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
-
 </head>
-
 <body>
   <div id="main">
     <header>
@@ -30,7 +28,7 @@
             $email = 'enter email address here';
             $password= 'enter password here';
             
-            // Do not amend anything below here, unless you know PHP
+            //perform validation here
             function email_is_valid($email) {
               return preg_match('/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i',$email);
             }
@@ -45,32 +43,79 @@
               $answer = trim(htmlspecialchars($_POST['answer']));
               if (email_is_valid($youremail) && !eregi("\r",$youremail) && !eregi("\n",$youremail) && $yourpassword != ""  && substr(md5($user_answer),5,10) === $answer) 
 			  {
-                $youremail = '';
-                $yourpassword = '';
-				echo "Login successful...";
-				echo "<p><a href=home.php>Click Here</a> to continue </p>";
+         			   
+				// JSONify - the data to send to the API
+				$postData = array(
+				'username' => $youremail,
+				'password' => $yourpassword
+				);
+
+					// Setup cURL for submission data via POST to donate-my-stuff cloud instance
+				$ch = curl_init('http://za-donate-my-stuff.appspot.com/managerlogin');
+				curl_setopt_array($ch, array(
+				CURLOPT_POST => TRUE,
+				CURLOPT_RETURNTRANSFER => TRUE,
+				CURLOPT_HTTPHEADER => array(
+				'Content-Type: application/json'   #this is important for JSON
+				),
+				CURLOPT_POSTFIELDS => json_encode($postData)
+			));
+
+			//Send the request
+			$response = curl_exec($ch);
+
+			// Check for errors
+			if($response === FALSE){
+			die(curl_error($ch));
+			}
+
+				// Decode the response
+				$responseData = json_decode($response, TRUE);
+
+				// Print the date from the response
+				echo "Status: ";
+				echo "<font color='green'>".$responseData['status']."</font>";
+				echo "  ";
+				echo "Message:  ";
+				echo "<b>".$responseData['message']."</b>";
+			    echo "\n";
+				
+				if($responseData['status'] = 101)
+				{
+				 echo "<p><a href=login.php>Try Again</a> </p>";
+				 die();
+				}
+				else
+				{
+				echo "<p><a href=home.php>Click Here</a> to continue</p>";
 				die();
-              }
-              else echo '<p style="color: red;">Please enter  a valid email address, password and the answer to the simple maths question before logging in.</p>';
+				}
+			}
             }
+			{
+              
+			  //else echo '<p style="color: red;">Please enter  a valid email address, password and the answer to the simple maths question before logging in.</p>';
+            
+			}
             $number_1 = rand(1, 9);
             $number_2 = rand(1, 9);
             $answer = substr(md5($number_1+$number_2),5,10);
           ?>
           <form id="contact" action="login.php" method="post">
             <div class="form_settings">
-              <p><span>Email Address</span><input class="contact" type="text" name="your_email" value="<?php echo $youremail; ?>" /></p>
-              <p><span>Password</span><input class="contact" type="password"  name="your_password" value="<?php echo $yourpassord; ?>" /></p>
+              <p><span>Email Address</span><input class="contact" type="text" name="your_email" value="<?php echo $email; ?>" /></p>
+              <p><span>Password</span><input class="contact" type="password"  name="your_password" value="<?php echo $password; ?>" /></p>
               <p style="line-height: 1.7em;">To help prevent spam and automated logins, please enter the answer to this question:</p>
               <p><span><?php echo $number_1; ?> + <?php echo $number_2; ?> = ?</span><input type="text" name="user_answer" /><input type="hidden" name="answer" value="<?php echo $answer; ?>" /></p>
-              <p style="padding-top: 15px"><span>&nbsp;</span><input class="submit" type="submit" name="login_submitted" value="send" /></p>
+              <p style="padding-top: 15px"><span>&nbsp;</span><input class="submit" type="submit" name="login_submitted" value="Login" /></p>
+			  <p style="padding-top: 15px"><span>&nbsp;</span><a href="manregister.php">Do not have a username? - Register</a></p>
             </div>
           </form>
         </div>
       </div>
      </div>
     <footer>
-      <p>Copyright&copy;2013 Donate-My-Stuff</p>
+      <p>Copyright&copy;2014 Donate-My-Stuff</p>
     </footer>
   </div>
   <!-- javascript at the bottom for fast page loading -->
