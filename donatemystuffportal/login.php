@@ -1,3 +1,8 @@
+<?php
+
+session_start();
+
+?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -72,31 +77,38 @@
 				// Decode the response
 				$responseData = json_decode($response, TRUE);
 
-				// Print the date from the response
+				/*// Print the date from the response
 				echo "Status: ";
 				echo "<font color='green'>".$responseData['status']."</font>";
 				echo "  ";
 				echo "Message:  ";
 				echo "<b>".$responseData['message']."</b>";
 			    echo "\n";
-				
-				if($responseData['status'] = 101)
+				*/
+				if($responseData['status'] == '101')
 				{
-				 echo "<p><a href=login.php>Try Again</a> </p>";
+				 echo "<p style='color: red;'>Login Error: Please Check username/password<a href=login.php> [ Try Again ]</a> </p>";
 				 die();
+				}
+				elseif($responseData['status']== '100')
+				{
+				//set the session as login is successful
+				$_SESSION['userid']=$responseData['message'];
+				echo "<p style='color: green;'>Login Successful --> <a href=home.php> [ Click Here ]</a> to continue</p>";
+				die();
 				}
 				else
 				{
-				echo "<p><a href=home.php>Click Here</a> to continue</p>";
+				echo "<p style='color: red; '>Connection Problems --></p> ". $responseData['message'];
 				die();
 				}
 			}
-            }
-			{
-              
-			  //else echo '<p style="color: red;">Please enter  a valid email address, password and the answer to the simple maths question before logging in.</p>';
+			else
+            {  
+			 echo '<p style="color: red;">Please enter  a valid email address, password and the answer to the simple maths question before logging in.</p>';
             
 			}
+            }
             $number_1 = rand(1, 9);
             $number_2 = rand(1, 9);
             $answer = substr(md5($number_1+$number_2),5,10);
