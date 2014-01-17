@@ -37,9 +37,7 @@ session_start();
             function email_is_valid($email) {
               return preg_match('/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i',$email);
             }
-            if (!email_is_valid($email)) {
-             
-            }
+
             if (isset($_POST['login_submitted'])) {
               $return = "\r";
               $youremail = trim(htmlspecialchars($_POST['your_email']));
@@ -54,37 +52,30 @@ session_start();
 				'username' => $youremail,
 				'password' => $yourpassword
 				);
+				
+				//JSONify the array
+				$data_string = json_encode($postData);
+				
+							
+				//create the conext (mainly used for headers)
+				$context =
+				array("http"=>
+				  array(
+					"method" => "POST",
+					"header" => "Content-Type: application/json",					
+					"content" => $data_string
+				  )
+				);
+				
+				//context for passing the headers
+				$context = stream_context_create($context);
+				
+				$response = file_get_contents("http://za-donate-my-stuff.appspot.com/managerlogin", false, $context);
 
-					// Setup cURL for submission data via POST to donate-my-stuff cloud instance
-				$ch = curl_init('http://za-donate-my-stuff.appspot.com/managerlogin');
-				curl_setopt_array($ch, array(
-				CURLOPT_POST => TRUE,
-				CURLOPT_RETURNTRANSFER => TRUE,
-				CURLOPT_HTTPHEADER => array(
-				'Content-Type: application/json'   #this is important for JSON
-				),
-				CURLOPT_POSTFIELDS => json_encode($postData)
-			));
-
-			//Send the request
-			$response = curl_exec($ch);
-
-			// Check for errors
-			if($response === FALSE){
-			die(curl_error($ch));
-			}
-
-				// Decode the response
+			
+				//Decode the response
 				$responseData = json_decode($response, TRUE);
-
-				/*// Print the date from the response
-				echo "Status: ";
-				echo "<font color='green'>".$responseData['status']."</font>";
-				echo "  ";
-				echo "Message:  ";
-				echo "<b>".$responseData['message']."</b>";
-			    echo "\n";
-				*/
+      
 				if($responseData['status'] == '101')
 				{
 				 echo "<p style='color: red;'>Login Error: Please Check username/password<a href=login.php> [ Try Again ]</a> </p>";
@@ -99,7 +90,7 @@ session_start();
 				}
 				else
 				{
-				echo "<p style='color: red; '>Connection Problems --></p> ". $responseData['message'];
+				echo "<p style='color: red; '>Connection Problems --></p> ". $responseData;
 				die();
 				}
 			}

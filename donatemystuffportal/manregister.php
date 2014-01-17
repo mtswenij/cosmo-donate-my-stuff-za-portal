@@ -61,29 +61,32 @@ if (isset($_POST['registration'])) {
 		'address' => array('country' => 'South Africa'),
 		'password' => $yourpassword
 		);
+		
+		
+				//JSONify the array
+				$data_string = json_encode($postData);
+		
+				//create the conext (mainly used for headers)
+				$context =
+				array("http"=>
+				  array(
+					"method" => "POST",
+					"header" => "Content-Type: application/json",					
+					"content" => $data_string
+				  )
+				);
+				
+				//context for passing the headers
+				$context = stream_context_create($context);
+				
+				$response = file_get_contents("http://za-donate-my-stuff.appspot.com/registermanager", false, $context);
 
-		//Setup cURL for submission data via POST to donate-my-stuff cloud instance
-		$ch = curl_init('http://za-donate-my-stuff.appspot.com/registermanager');
-		curl_setopt_array($ch, array(
-		CURLOPT_POST => TRUE,
-		CURLOPT_RETURNTRANSFER => TRUE,
-		CURLOPT_HTTPHEADER => array(
-		'Content-Type: application/json'   #this is important for JSON
-		),
-		CURLOPT_POSTFIELDS => json_encode($postData)
-		));
-
-		//Send the request
-		$response = curl_exec($ch);
-
-		// Check for errors
-		if($response === FALSE){
-			die(curl_error($ch));
-		}
-
-				// Decode the response
+			
+				//Decode the response
 				$responseData = json_decode($response, TRUE);
+      
 
+				//user feedback messages
 				if($responseData['status'] == '401')
 				{
 				 echo "<p style='color: red;'>Registration Failed <a href=manregister.php>Try Again</a> </p>";
