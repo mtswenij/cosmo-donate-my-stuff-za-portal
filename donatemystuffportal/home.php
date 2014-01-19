@@ -35,13 +35,8 @@ if(isset($_SESSION['userid']))
           <li class="current"><a href="#">Home</a></li>
           <li><a href="requests.php">Requests</a></li>
           <li><a href="offers.php">Offers</a></li>
-          <li><a href="#">Donations</a></li>
-          <li><a href="#">Beneficiaries</a>
-            <ul>
-              <li><a href="#">Cosmo</a></li>
-              <li><a href="#">Diepsloot</a>
-            </ul>
-          </li>
+          <li><a href="donors.php">Donors</a></li>
+          <li><a href="beneficiaries.php">Beneficiaries</a></li>
           <li><a href="#">Contact Us</a></li>
 		   <li><a href="logout.php">Logout</a></li>
         </ul>

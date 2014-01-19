@@ -29,9 +29,15 @@ handlers:
   
 - url: /offers.php
   script: offers.php
+
+- url: /beneficiaries.php
+  script: beneficiaries.php  
   
- - url: /manregister.php
+- url: /manregister.php
   script: manregister.php
+
+- url: /donors.php
+  script: donors.php
   
 - url: /logout.php
   script: logout.php
